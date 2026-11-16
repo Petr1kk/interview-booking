@@ -259,7 +259,7 @@
     var token = store(KEY);
     if (!token) { $('#mine').hidden = true; return; }
     call('booking', { token: token }).then(function (res) {
-      if (res.ok && res.status === 'Записан' && !res.past) {
+      if (res.ok && (res.status === 'Записан' || res.status === 'Записано') && !res.past) {
         state.token = token;
         $('#mineWhen').textContent = fullLabel(res.day, res.time);
         box($('#mineMsg'), ''); $('#mineCancel').hidden = false; $('#mine').hidden = false;
