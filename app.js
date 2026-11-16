@@ -112,9 +112,32 @@
     BUSY: 'Зараз багато звернень. Спробуйте за хвилину.',
     CAPTCHA: 'Не вдалося підтвердити, що ви не робот. Оновіть сторінку й спробуйте знову.',
     NETWORK: 'Немає зв’язку із сервером. Перевірте інтернет і спробуйте знову.',
-    SERVER: 'Щось пішло не так. Спробуйте ще раз або зателефонуйте менеджеру.'
+    SERVER: 'Щось пішло не так. Спробуйте ще раз або зателефонуйте менеджеру.',
+    FILE_TYPE: 'Підходять лише файли PDF, DOC, DOCX.',
+    FILE_SIZE: 'Файл завеликий: максимум 5 МБ.',
+    FILE_CONTENT: 'Не вдалося прочитати файл. Перевірте, що це справжній PDF, DOC або DOCX.'
   };
   function msgFor(res) { return MESSAGES[res.error] || MESSAGES.SERVER; }
+
+  /* ---------- Файл резюме ---------- */
+  var MAX_FILE = 5 * 1024 * 1024;
+  function fileProblem(file) {
+    if (!file) return '';
+    if (!/\.(pdf|doc|docx)$/i.test(file.name)) return 'Підходять лише файли PDF, DOC, DOCX.';
+    if (!file.size) return 'Файл порожній.';
+    if (file.size > MAX_FILE) return 'Файл завеликий: максимум 5 МБ.';
+    return '';
+  }
+  function readFile(input) {
+    var file = input && input.files && input.files[0];
+    if (!file) return Promise.resolve(null);
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function () { var s = String(r.result), i = s.indexOf(','); resolve({ name: file.name, data: s.slice(i + 1) }); };
+      r.onerror = function () { reject(new Error('read')); };
+      r.readAsDataURL(file);
+    });
+  }
 
   /* ---------- Turnstile ---------- */
   function loadTurnstile() {
@@ -201,12 +224,18 @@
     setErr(form, errs); box($('#formErr'), '');
     if (Object.keys(errs).length) return;
     if (CFG.TURNSTILE_SITEKEY && !state.captcha.book) { box($('#formErr'), 'Підтвердіть, що ви не робот.'); return; }
+    var fileMsg = fileProblem($('#fFile').files[0]);
+    if (fileMsg) { setErr(form, { file: fileMsg }); return; }
     btn.disabled = true; btn.textContent = 'Записуємо…';
-    call('book', {
+    readFile($('#fFile')).catch(function () { return false; }).then(function (fileObj) {
+      if (fileObj === false) { btn.disabled = false; btn.textContent = 'Записатися'; setErr(form, { file: 'Не вдалося прочитати файл.' }); return null; }
+      return call('book', {
       day: state.day, time: state.time, name: $('#fName').value, phone: phone, email: $('#fEmail').value,
       resume: $('#fResume').value, about: $('#fAbout').value, website: $('#fWebsite').value,
-      elapsedMs: Date.now() - state.openedAt, captcha: state.captcha.book
+      elapsedMs: Date.now() - state.openedAt, captcha: state.captcha.book, file: fileObj
+      });
     }).then(function (res) {
+      if (!res) return;
       btn.disabled = false; btn.textContent = 'Записатися';
       if (res.ok) { onBooked(res.booking); return; }
       resetCaptcha('book');
@@ -217,6 +246,7 @@
   }
   function onBooked(b) {
     store(KEY, b.token); state.token = b.token;
+    $('#fFile').value = '';
     $('#doneTitle').textContent = 'Ви записані';
     $('#doneWhen').textContent = fullLabel(b.day, b.time);
     $('#doneText').textContent = 'Співбесіда триватиме близько ' + (state.cfg.durationMin || 30) + ' хвилин. Якщо плани зміняться, скасуйте запис за кнопкою нижче.';
@@ -235,13 +265,20 @@
     setErr(form, errs); box($('#reqErr'), '');
     if (Object.keys(errs).length) return;
     if (CFG.TURNSTILE_SITEKEY && !state.captcha.req) { box($('#reqErr'), 'Підтвердіть, що ви не робот.'); return; }
+    var fileMsg = fileProblem($('#rFile').files[0]);
+    if (fileMsg) { setErr(form, { file: fileMsg }); return; }
     btn.disabled = true; btn.textContent = 'Надсилаємо…';
-    call('request', {
+    readFile($('#rFile')).catch(function () { return false; }).then(function (fileObj) {
+      if (fileObj === false) { btn.disabled = false; btn.textContent = 'Надіслати заявку'; setErr(form, { file: 'Не вдалося прочитати файл.' }); return null; }
+      return call('request', {
       name: $('#rName').value, phone: phone, where: $('#rWhere').value, resume: $('#rResume').value, about: $('#rAbout').value,
-      website: $('#rWebsite').value, elapsedMs: Date.now() - state.openedAt, captcha: state.captcha.req
+      website: $('#rWebsite').value, elapsedMs: Date.now() - state.openedAt, captcha: state.captcha.req, file: fileObj
+      });
     }).then(function (res) {
+      if (!res) return;
       btn.disabled = false; btn.textContent = 'Надіслати заявку';
       if (res.ok) {
+        $('#rFile').value = '';
         $('#doneTitle').textContent = 'Заявку надіслано';
         $('#doneWhen').textContent = '';
         $('#doneText').textContent = 'Менеджер зв’яжеться з вами найближчим часом.';

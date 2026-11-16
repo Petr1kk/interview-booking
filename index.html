@@ -43,10 +43,11 @@
       <label class="f"><span>Телефон * (+380…)</span><input id="fPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 67 123 45 67" required><em class="err" data-for="phone"></em></label>
       <label class="f"><span>Пошта (необов’язково)</span><input id="fEmail" name="email" type="email" autocomplete="email" maxlength="120"><em class="err" data-for="email"></em></label>
       <label class="f"><span>Посилання на резюме (необов’язково)</span><input id="fResume" name="resume" type="url" inputmode="url" placeholder="https://" maxlength="300"><em class="err" data-for="resume"></em></label>
+      <label class="f"><span>Або прикріпіть файл резюме (PDF, DOC, DOCX, до 5 МБ)</span><input id="fFile" name="file" type="file" accept=".pdf,.doc,.docx,application/pdf"><em class="err" data-for="file"></em></label>
       <label class="f"><span>Кілька слів про себе (необов’язково)</span><textarea id="fAbout" name="about" rows="3" maxlength="1000"></textarea></label>
       <input id="fWebsite" name="website" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="cf" id="cfBook"></div>
-      <p class="note">Надсилаючи форму, ви погоджуєтеся на обробку вказаних даних для організації співбесіди. Дані зберігаються обмежений час.</p>
+      <p class="note">Надсилаючи форму (разом із доданим файлом, якщо він є), ви погоджуєтеся на обробку вказаних даних для організації співбесіди. Дані та файли зберігаються обмежений час.</p>
       <div id="formErr" class="alert bad" hidden role="alert"></div>
       <button id="submitBook" class="btn" type="submit">Записатися</button>
     </form>
@@ -61,10 +62,11 @@
       <label class="f"><span>Телефон * (+380…)</span><input id="rPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 67 123 45 67" required><em class="err" data-for="phone"></em></label>
       <label class="f"><span>Де хочете працювати</span><input id="rWhere" name="where" maxlength="120"></label>
       <label class="f"><span>Посилання на резюме (необов’язково)</span><input id="rResume" name="resume" type="url" inputmode="url" placeholder="https://" maxlength="300"><em class="err" data-for="resume"></em></label>
+      <label class="f"><span>Або прикріпіть файл резюме (PDF, DOC, DOCX, до 5 МБ)</span><input id="rFile" name="file" type="file" accept=".pdf,.doc,.docx,application/pdf"><em class="err" data-for="file"></em></label>
       <label class="f"><span>Кілька слів про себе</span><textarea id="rAbout" name="about" rows="3" maxlength="1000"></textarea></label>
       <input id="rWebsite" name="website" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="cf" id="cfReq"></div>
-      <p class="note">Надсилаючи форму, ви погоджуєтеся на обробку вказаних даних. Дані зберігаються обмежений час.</p>
+      <p class="note">Надсилаючи форму (разом із доданим файлом, якщо він є), ви погоджуєтеся на обробку вказаних даних. Дані та файли зберігаються обмежений час.</p>
       <div id="reqErr" class="alert bad" hidden role="alert"></div>
       <button id="submitReq" class="btn" type="submit">Надіслати заявку</button>
     </form>
