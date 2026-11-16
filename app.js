@@ -159,9 +159,12 @@
     var list = state.days[state.day] || [];
     empty.hidden = list.length > 0;
     empty.textContent = list.length ? '' : 'На цей день вільного часу немає. Оберіть інший день або залиште заявку.';
-    list.forEach(function (t) {
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'slot'; b.textContent = t;
-      b.addEventListener('click', function () { openForm(t); });
+    var shown = state.days[state.day] ? list.map(function (t) { return { t: t }; }).concat((state.lunch || []).map(function (t) { return { t: t, lunch: true }; })) : [];
+    shown.sort(function (a, b) { return a.t < b.t ? -1 : a.t > b.t ? 1 : 0; });
+    shown.forEach(function (x) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'slot'; b.textContent = x.t;
+      if (x.lunch) { b.disabled = true; b.title = 'Обід'; b.setAttribute('aria-label', x.t + ', обід, недоступно'); }
+      else b.addEventListener('click', function () { openForm(x.t); });
       wrap.appendChild(b);
     });
   }
@@ -170,6 +173,7 @@
       if (!res.ok) { box($('#slotsEmpty'), msgFor(res)); return; }
       if (!res.accepting) { show('vClosed'); return; }
       state.days = res.days || {};
+      state.lunch = res.lunch || [];
       state.order = Object.keys(state.days).sort();
       if (!state.day || state.order.indexOf(state.day) < 0) {
         state.day = state.order.filter(function (d) { return state.days[d].length; })[0] || state.order[0] || null;
