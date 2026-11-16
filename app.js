@@ -37,7 +37,7 @@
   function ymd(date) { return date.getUTCFullYear() + '-' + pad(date.getUTCMonth() + 1) + '-' + pad(date.getUTCDate()); }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function mockHandle(action, d) {
-    if (action === 'config') return { ok: true, accepting: true, title: 'Запись на собеседование', subtitle: 'Менеджер по продажам · 30 минут', durationMin: 30 };
+    if (action === 'config') return { ok: true, accepting: true, title: 'Запис на співбесіду', subtitle: 'Менеджер з продажу · 30 хвилин', durationMin: 30 };
     if (action === 'slots') {
       var out = {}, base = new Date(); base.setUTCHours(0, 0, 0, 0);
       var all = ['10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'];
@@ -53,7 +53,7 @@
       return { ok: true, accepting: true, days: out };
     }
     if (action === 'book') {
-      if (!/^\+380\d{9}$/.test(normPhone(d.phone))) return { ok: false, error: 'VALIDATION', fields: { phone: 'Номер в формате +380 XX XXX XX XX' } };
+      if (!/^\+380\d{9}$/.test(normPhone(d.phone))) return { ok: false, error: 'VALIDATION', fields: { phone: 'Номер у форматі +380 XX XXX XX XX' } };
       var p = normPhone(d.phone);
       if (Object.keys(mockDb.bookings).some(function (t) { return mockDb.bookings[t].phone === p && mockDb.bookings[t].status === 'Записан'; })) return { ok: false, error: 'ALREADY_BOOKED' };
       var token = 'demo-' + Math.random().toString(16).slice(2) + '-0000-0000-0000-000000000000';
@@ -61,7 +61,7 @@
       return { ok: true, booking: { token: token, day: d.day, time: d.time } };
     }
     if (action === 'request') {
-      if (!/^\+380\d{9}$/.test(normPhone(d.phone))) return { ok: false, error: 'VALIDATION', fields: { phone: 'Номер в формате +380 XX XXX XX XX' } };
+      if (!/^\+380\d{9}$/.test(normPhone(d.phone))) return { ok: false, error: 'VALIDATION', fields: { phone: 'Номер у форматі +380 XX XXX XX XX' } };
       return { ok: true };
     }
     if (action === 'booking') {
@@ -86,9 +86,9 @@
     return '';
   }
   function dateOf(day) { return new Date(day + 'T00:00:00Z'); }
-  var fWeek = new Intl.DateTimeFormat('ru-RU', { weekday: 'short', timeZone: 'UTC' });
-  var fMonth = new Intl.DateTimeFormat('ru-RU', { month: 'short', timeZone: 'UTC' });
-  var fFull = new Intl.DateTimeFormat('ru-RU', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+  var fWeek = new Intl.DateTimeFormat('uk-UA', { weekday: 'short', timeZone: 'UTC' });
+  var fMonth = new Intl.DateTimeFormat('uk-UA', { month: 'short', timeZone: 'UTC' });
+  var fFull = new Intl.DateTimeFormat('uk-UA', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
   function fullLabel(day, time) { return fFull.format(dateOf(day)) + ', ' + time; }
   function show(id) {
     ['vPick', 'vForm', 'vRequest', 'vDone', 'vClosed'].forEach(function (v) { $('#' + v).hidden = v !== id; });
@@ -105,14 +105,14 @@
   }
   function box(el, msg) { el.textContent = msg || ''; el.hidden = !msg; }
   var MESSAGES = {
-    TAKEN: 'Это время уже занято. Выберите другое.',
-    ALREADY_BOOKED: 'У вас уже есть запись. Отмените её в блоке «Ваша запись» на этом устройстве или позвоните менеджеру.',
-    CAP: 'На сегодня запись закрыта. Оставьте заявку, и менеджер свяжется с вами.',
-    CLOSED: 'Запись временно закрыта.',
-    BUSY: 'Сейчас много обращений. Попробуйте через минуту.',
-    CAPTCHA: 'Не удалось подтвердить, что вы не робот. Обновите страницу и попробуйте снова.',
-    NETWORK: 'Нет связи с сервером. Проверьте интернет и попробуйте снова.',
-    SERVER: 'Что-то пошло не так. Попробуйте ещё раз или позвоните менеджеру.'
+    TAKEN: 'Цей час уже зайнятий. Оберіть інший.',
+    ALREADY_BOOKED: 'У вас уже є запис. Скасуйте його в блоці «Ваш запис» на цьому пристрої або зателефонуйте менеджеру.',
+    CAP: 'На сьогодні запис закрито. Залиште заявку, і менеджер зв’яжеться з вами.',
+    CLOSED: 'Запис тимчасово закрито.',
+    BUSY: 'Зараз багато звернень. Спробуйте за хвилину.',
+    CAPTCHA: 'Не вдалося підтвердити, що ви не робот. Оновіть сторінку й спробуйте знову.',
+    NETWORK: 'Немає зв’язку із сервером. Перевірте інтернет і спробуйте знову.',
+    SERVER: 'Щось пішло не так. Спробуйте ще раз або зателефонуйте менеджеру.'
   };
   function msgFor(res) { return MESSAGES[res.error] || MESSAGES.SERVER; }
 
@@ -158,7 +158,7 @@
     var wrap = $('#slots'), empty = $('#slotsEmpty'); wrap.textContent = '';
     var list = state.days[state.day] || [];
     empty.hidden = list.length > 0;
-    empty.textContent = list.length ? '' : 'На этот день свободного времени нет. Выберите другой день или оставьте заявку.';
+    empty.textContent = list.length ? '' : 'На цей день вільного часу немає. Оберіть інший день або залиште заявку.';
     list.forEach(function (t) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'slot'; b.textContent = t;
       b.addEventListener('click', function () { openForm(t); });
@@ -176,7 +176,7 @@
       }
       renderDays(); renderSlots();
       $('#slotsEmpty').hidden = state.order.length > 0 && (state.days[state.day] || []).length > 0;
-      if (!state.order.length) { $('#slotsEmpty').hidden = false; $('#slotsEmpty').textContent = 'Свободных дней пока нет. Оставьте заявку.'; }
+      if (!state.order.length) { $('#slotsEmpty').hidden = false; $('#slotsEmpty').textContent = 'Вільних днів поки немає. Залиште заявку.'; }
     });
   }
 
@@ -192,18 +192,18 @@
     ev.preventDefault();
     var form = $('#bookForm'), btn = $('#submitBook'), errs = {};
     var phone = normPhone($('#fPhone').value);
-    if ($('#fName').value.trim().length < 2) errs.name = 'Укажите имя';
-    if (!phone) errs.phone = 'Номер в формате +380 XX XXX XX XX';
+    if ($('#fName').value.trim().length < 2) errs.name = 'Вкажіть ім’я';
+    if (!phone) errs.phone = 'Номер у форматі +380 XX XXX XX XX';
     setErr(form, errs); box($('#formErr'), '');
     if (Object.keys(errs).length) return;
-    if (CFG.TURNSTILE_SITEKEY && !state.captcha.book) { box($('#formErr'), 'Подтвердите, что вы не робот.'); return; }
-    btn.disabled = true; btn.textContent = 'Записываем…';
+    if (CFG.TURNSTILE_SITEKEY && !state.captcha.book) { box($('#formErr'), 'Підтвердіть, що ви не робот.'); return; }
+    btn.disabled = true; btn.textContent = 'Записуємо…';
     call('book', {
       day: state.day, time: state.time, name: $('#fName').value, phone: phone, email: $('#fEmail').value,
       resume: $('#fResume').value, about: $('#fAbout').value, website: $('#fWebsite').value,
       elapsedMs: Date.now() - state.openedAt, captcha: state.captcha.book
     }).then(function (res) {
-      btn.disabled = false; btn.textContent = 'Записаться';
+      btn.disabled = false; btn.textContent = 'Записатися';
       if (res.ok) { onBooked(res.booking); return; }
       resetCaptcha('book');
       if (res.error === 'VALIDATION') { setErr(form, res.fields); return; }
@@ -213,9 +213,9 @@
   }
   function onBooked(b) {
     store(KEY, b.token); state.token = b.token;
-    $('#doneTitle').textContent = 'Вы записаны';
+    $('#doneTitle').textContent = 'Ви записані';
     $('#doneWhen').textContent = fullLabel(b.day, b.time);
-    $('#doneText').textContent = 'Собеседование около ' + (state.cfg.durationMin || 30) + ' минут. Если планы изменятся, отмените запись по кнопке ниже.';
+    $('#doneText').textContent = 'Співбесіда триватиме близько ' + (state.cfg.durationMin || 30) + ' хвилин. Якщо плани зміняться, скасуйте запис за кнопкою нижче.';
     $('#doneLink').value = location.origin + location.pathname + '#b=' + b.token;
     $('#doneLinkBox').hidden = false; box($('#doneMsg'), '');
     show('vDone'); refreshMine(); loadSlots();
@@ -226,21 +226,21 @@
     ev.preventDefault();
     var form = $('#reqForm'), btn = $('#submitReq'), errs = {};
     var phone = normPhone($('#rPhone').value);
-    if ($('#rName').value.trim().length < 2) errs.name = 'Укажите имя';
-    if (!phone) errs.phone = 'Номер в формате +380 XX XXX XX XX';
+    if ($('#rName').value.trim().length < 2) errs.name = 'Вкажіть ім’я';
+    if (!phone) errs.phone = 'Номер у форматі +380 XX XXX XX XX';
     setErr(form, errs); box($('#reqErr'), '');
     if (Object.keys(errs).length) return;
-    if (CFG.TURNSTILE_SITEKEY && !state.captcha.req) { box($('#reqErr'), 'Подтвердите, что вы не робот.'); return; }
-    btn.disabled = true; btn.textContent = 'Отправляем…';
+    if (CFG.TURNSTILE_SITEKEY && !state.captcha.req) { box($('#reqErr'), 'Підтвердіть, що ви не робот.'); return; }
+    btn.disabled = true; btn.textContent = 'Надсилаємо…';
     call('request', {
       name: $('#rName').value, phone: phone, where: $('#rWhere').value, resume: $('#rResume').value, about: $('#rAbout').value,
       website: $('#rWebsite').value, elapsedMs: Date.now() - state.openedAt, captcha: state.captcha.req
     }).then(function (res) {
-      btn.disabled = false; btn.textContent = 'Отправить заявку';
+      btn.disabled = false; btn.textContent = 'Надіслати заявку';
       if (res.ok) {
-        $('#doneTitle').textContent = 'Заявка отправлена';
+        $('#doneTitle').textContent = 'Заявку надіслано';
         $('#doneWhen').textContent = '';
-        $('#doneText').textContent = 'Менеджер свяжется с вами в ближайшее время.';
+        $('#doneText').textContent = 'Менеджер зв’яжеться з вами найближчим часом.';
         $('#doneLinkBox').hidden = true;
         show('vDone'); return;
       }
@@ -265,15 +265,15 @@
   function cancel(btn, msgEl, done) {
     if (!state.token) return;
     if (btn.dataset.armed !== '1') {
-      btn.dataset.armed = '1'; btn.textContent = 'Точно отменить?';
-      setTimeout(function () { btn.dataset.armed = ''; btn.textContent = 'Отменить запись'; }, 5000);
+      btn.dataset.armed = '1'; btn.textContent = 'Точно скасувати?';
+      setTimeout(function () { btn.dataset.armed = ''; btn.textContent = 'Скасувати запис'; }, 5000);
       return;
     }
     btn.disabled = true;
     call('cancel', { token: state.token }).then(function (res) {
-      btn.disabled = false; btn.dataset.armed = ''; btn.textContent = 'Отменить запись';
+      btn.disabled = false; btn.dataset.armed = ''; btn.textContent = 'Скасувати запис';
       if (res.ok) { store(KEY, null); state.token = null; box(msgEl, ''); done(); loadSlots(); }
-      else box(msgEl, res.error === 'NOT_FOUND' ? 'Запись уже отменена или не найдена.' : msgFor(res));
+      else box(msgEl, res.error === 'NOT_FOUND' ? 'Запис уже скасовано або не знайдено.' : msgFor(res));
     });
   }
 
@@ -285,7 +285,7 @@
     call('config').then(function (c) {
       if (c.ok) {
         state.cfg = c;
-        $('#title').textContent = c.title || 'Запись на собеседование';
+        $('#title').textContent = c.title || 'Запис на співбесіду';
         document.title = c.title || document.title;
         $('#subtitle').textContent = c.subtitle || '';
       }
@@ -300,10 +300,10 @@
     $('#bookForm').addEventListener('submit', submitBook);
     $('#reqForm').addEventListener('submit', submitReq);
     $('#mineCancel').addEventListener('click', function () { cancel($('#mineCancel'), $('#mineMsg'), function () { $('#mine').hidden = true; }); });
-    $('#doneCancel').addEventListener('click', function () { cancel($('#doneCancel'), $('#doneMsg'), function () { $('#doneLinkBox').hidden = true; $('#doneTitle').textContent = 'Запись отменена'; $('#doneWhen').textContent = ''; $('#doneText').textContent = 'Вы можете выбрать другое время.'; refreshMine(); }); });
+    $('#doneCancel').addEventListener('click', function () { cancel($('#doneCancel'), $('#doneMsg'), function () { $('#doneLinkBox').hidden = true; $('#doneTitle').textContent = 'Запис скасовано'; $('#doneWhen').textContent = ''; $('#doneText').textContent = 'Ви можете обрати інший час.'; refreshMine(); }); });
     $('#copyBtn').addEventListener('click', function () {
       var inp = $('#doneLink'); inp.select();
-      var ok = function () { $('#copyBtn').textContent = 'Скопировано'; setTimeout(function () { $('#copyBtn').textContent = 'Копировать'; }, 1500); };
+      var ok = function () { $('#copyBtn').textContent = 'Скопійовано'; setTimeout(function () { $('#copyBtn').textContent = 'Копіювати'; }, 1500); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(inp.value).then(ok, function () { document.execCommand && document.execCommand('copy'); ok(); });
       else { try { document.execCommand('copy'); ok(); } catch (e) { /* ссылка выделена, можно скопировать вручную */ } }
     });
