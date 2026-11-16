@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Запись на собеседование</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1 id="title">Запись на собеседование</h1>
+    <p id="subtitle" class="muted"></p>
+  </header>
+
+  <div id="demo" class="alert warn" hidden>Демо-режим: данные выдуманы, запись никуда не отправляется.</div>
+
+  <section id="mine" class="card" hidden>
+    <div class="eyebrow">Ваша запись</div>
+    <div id="mineWhen" class="big"></div>
+    <div class="row">
+      <button id="mineCancel" class="btn ghost" type="button">Отменить запись</button>
+    </div>
+    <div id="mineMsg" class="note" role="status"></div>
+  </section>
+
+  <section id="vPick">
+    <h2>Выберите день и время</h2>
+    <div id="days" class="days" role="tablist" aria-label="Дни"></div>
+    <div id="slots" class="slots" aria-live="polite"></div>
+    <div id="slotsEmpty" class="muted" hidden></div>
+    <button id="toRequest" class="btn ghost" type="button">Нет подходящего времени</button>
+  </section>
+
+  <section id="vForm" hidden>
+    <button class="link" id="backFromForm" type="button">← Выбрать другое время</button>
+    <h2 id="formWhen"></h2>
+    <form id="bookForm" novalidate autocomplete="on">
+      <label class="f"><span>Имя *</span><input id="fName" name="name" autocomplete="name" maxlength="80" required><em class="err" data-for="name"></em></label>
+      <label class="f"><span>Телефон * (+380…)</span><input id="fPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 67 123 45 67" required><em class="err" data-for="phone"></em></label>
+      <label class="f"><span>Почта (необязательно)</span><input id="fEmail" name="email" type="email" autocomplete="email" maxlength="120"><em class="err" data-for="email"></em></label>
+      <label class="f"><span>Ссылка на резюме (необязательно)</span><input id="fResume" name="resume" type="url" inputmode="url" placeholder="https://" maxlength="300"><em class="err" data-for="resume"></em></label>
+      <label class="f"><span>Пара слов о себе (необязательно)</span><textarea id="fAbout" name="about" rows="3" maxlength="1000"></textarea></label>
+      <input id="fWebsite" name="website" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="cf" id="cfBook"></div>
+      <p class="note">Отправляя форму, вы соглашаетесь на обработку указанных данных для организации собеседования. Данные хранятся ограниченное время.</p>
+      <div id="formErr" class="alert bad" hidden role="alert"></div>
+      <button id="submitBook" class="btn" type="submit">Записаться</button>
+    </form>
+  </section>
+
+  <section id="vRequest" hidden>
+    <button class="link" id="backFromRequest" type="button">← К выбору времени</button>
+    <h2>Оставить заявку</h2>
+    <p class="muted">Расскажите о себе, и менеджер свяжется с вами.</p>
+    <form id="reqForm" novalidate>
+      <label class="f"><span>Имя *</span><input id="rName" name="name" autocomplete="name" maxlength="80" required><em class="err" data-for="name"></em></label>
+      <label class="f"><span>Телефон * (+380…)</span><input id="rPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+380 67 123 45 67" required><em class="err" data-for="phone"></em></label>
+      <label class="f"><span>Где хотите работать</span><input id="rWhere" name="where" maxlength="120"></label>
+      <label class="f"><span>Ссылка на резюме (необязательно)</span><input id="rResume" name="resume" type="url" inputmode="url" placeholder="https://" maxlength="300"><em class="err" data-for="resume"></em></label>
+      <label class="f"><span>Пара слов о себе</span><textarea id="rAbout" name="about" rows="3" maxlength="1000"></textarea></label>
+      <input id="rWebsite" name="website" class="trap" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="cf" id="cfReq"></div>
+      <p class="note">Отправляя форму, вы соглашаетесь на обработку указанных данных. Данные хранятся ограниченное время.</p>
+      <div id="reqErr" class="alert bad" hidden role="alert"></div>
+      <button id="submitReq" class="btn" type="submit">Отправить заявку</button>
+    </form>
+  </section>
+
+  <section id="vDone" class="card center" hidden>
+    <div class="tick" aria-hidden="true">✓</div>
+    <h2 id="doneTitle">Вы записаны</h2>
+    <div id="doneWhen" class="big"></div>
+    <div id="doneText" class="muted"></div>
+    <div id="doneLinkBox" hidden>
+      <p class="note">Сохраните эту ссылку: по ней можно открыть запись и отменить её с любого устройства.</p>
+      <div class="copy"><input id="doneLink" readonly><button id="copyBtn" class="btn ghost" type="button">Копировать</button></div>
+      <button id="doneCancel" class="btn ghost" type="button">Отменить запись</button>
+      <div id="doneMsg" class="note" role="status"></div>
+    </div>
+    <button id="doneBack" class="link" type="button">Вернуться к выбору времени</button>
+  </section>
+
+  <section id="vClosed" class="card center" hidden>
+    <h2>Запись временно закрыта</h2>
+    <p class="muted">Попробуйте позже или напишите менеджеру.</p>
+  </section>
+</main>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
